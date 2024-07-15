@@ -10,31 +10,32 @@ or explicitly include the tag, such as
 
 where `<tag>` refers to the first column of this table:
 
-| Tag              | Java version | Linux  | JVM Type           | Architecture      |
-|------------------|--------------|--------|--------------------|-------------------|
-| latest           | 21           | Ubuntu | Hotspot            | amd64,arm64       |
-| stable           | 21           | Ubuntu | Hotspot            | amd64,arm64       |
-| java21           | 21           | Ubuntu | Hotspot            | amd64,arm64       |
-| java21-alpine    | 21           | Alpine | Hotspot            | amd64             |
-| java21-graalvm   | 21           | Oracle | Oracle GraalVM[^1] | amd64,arm64       |   
-| java17           | 17           | Ubuntu | Hotspot            | amd64,arm64,armv7 |
-| java17-jdk       | 17           | Ubuntu | Hotspot+JDK        | amd64,arm64,armv7 |
-| java17-openj9    | 17           | Debian | OpenJ9             | amd64             |
-| java17-graalvm   | 17           | Oracle | Oracle GraalVM[^1] | amd64,arm64       |   
-| java17-alpine    | 17           | Alpine | Hotspot            | amd64             |
-| java11           | 11           | Ubuntu | Hotspot            | amd64,arm64,armv7 |
-| java8            | 8            | Ubuntu | Hotspot            | amd64             |
-| java8-alpine     | 8            | Alpine | Hotspot            | amd64             |
-| java8-jdk        | 8            | Ubuntu | Hotspot+JDK        | amd64             |
-| java8-openj9     | 8            | Debian | OpenJ9             | amd64             |
-| java8-graalvm-ce | 8            | Oracle | GraalVM CE         | amd64             |
+| Tag              | Java version | Linux  | JVM Type           | Architecture        |
+|------------------|--------------|--------|--------------------|---------------------|
+| latest           | 21           | Ubuntu | Hotspot            | amd64, arm64        |
+| stable           | 21           | Ubuntu | Hotspot            | amd64, arm64        |
+| java21           | 21           | Ubuntu | Hotspot            | amd64, arm64        |
+| java21-jdk       | 21           | Ubuntu | Hotspot+JDK        | amd64, arm64        |
+| java21-alpine    | 21           | Alpine | Hotspot            | amd64, arm64        |
+| java21-graalvm   | 21           | Oracle | Oracle GraalVM[^1] | amd64, arm64        |   
+| java17           | 17           | Ubuntu | Hotspot            | amd64, arm64, armv7 |
+| java17-graalvm   | 17           | Oracle | Oracle GraalVM[^1] | amd64, arm64        |   
+| java17-alpine    | 17           | Alpine | Hotspot            | amd64  (1)          |
+| java11           | 11           | Ubuntu | Hotspot            | amd64, arm64, armv7 |
+| java8            | 8            | Ubuntu | Hotspot            | amd64, arm64, armv7 |
+| java8-alpine     | 8            | Alpine | Hotspot            | amd64  (1)          |
+| java8-jdk        | 8            | Ubuntu | Hotspot+JDK        | amd64               |
+| java8-openj9     | 8            | Debian | OpenJ9             | amd64               |
+| java8-graalvm-ce | 8            | Oracle | GraalVM CE         | amd64               |
 
-!!! example "Example using java8-multiarch"
+1. Why no arm64 for Java 17 Alpine? That is because the base images, such as [elipse-temurin](https://hub.docker.com/_/eclipse-temurin/tags?page=&page_size=&ordering=&name=17-jre-alpine) do not provide support for that. Use the Ubuntu based images instead.
+
+!!! example "Example using java8"
 
     With docker run command-line
     
     ```
-    docker run -it -e EULA=true itzg/minecraft-server:java8-multiarch
+    docker run -it -e EULA=true itzg/minecraft-server:java8
     ```
     
     or in a compose file
@@ -42,7 +43,7 @@ where `<tag>` refers to the first column of this table:
     ```yaml
     services:
       mc:
-        image: itzg/minecraft-server:java8-multiarch
+        image: itzg/minecraft-server:java8
     ```
 
 !!! note "Latest"
@@ -78,6 +79,18 @@ The `stable` image tag combines the benefits of `latest` and [release versions](
 ## Version compatibilities
 
 [This section in the Minecraft wiki](https://minecraft.wiki/w/Tutorials/Update_Java#Why_update?) lists out versions of **vanilla** Minecraft versions and the corresponding Java version that is required.
+
+### Class file version 65.0
+
+If encountering a startup failure similar to the following examples, then ensure that the latest image has been re-pulled to use a Java 21. Alternatively, set the image tag specifically to `itzg/minecraft-server:java21`.
+
+> Exception in thread "ServerMain" java.lang.UnsupportedClassVersionError: org/bukkit/craftbukkit/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0
+
+or
+
+> Error: LinkageError occurred while loading main class net.minecraft.bundler.Main
+java.lang.UnsupportedClassVersionError: net/minecraft/bundler/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0
+
 
 ### Forge versions
 
@@ -117,6 +130,7 @@ The following image tags have been deprecated and are no longer receiving update
 - multiarch-latest
 - java16/java16-openj9
 - java17-graalvm-ce
+- java17-openj9
 - java20-graalvm, java20, java20-alpine
 - java8-multiarch is still built and pushed, but please move to java8 instead
 

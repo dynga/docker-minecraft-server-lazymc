@@ -16,7 +16,6 @@ apt-get install -y \
   iputils-ping \
   curl \
   git \
-  git-lfs \
   jq \
   dos2unix \
   mysql-client \
@@ -29,6 +28,11 @@ apt-get install -y \
   nfs-common \
   libpcap0.8 \
   webp
+
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+apt-get update
+apt-get install -y \
+  git-lfs
 
 apt-get clean
 
